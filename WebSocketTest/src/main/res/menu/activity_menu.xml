@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/WSClientServerTest"
+        android:title="WS client/server test"  />
+    <item android:id="@+id/WSSClientTest"
+        android:title="WSS client test"  />
+    <item android:id="@+id/Exit"
+        android:title="Exit" />
+    <!--item android:textSize>@android:style/TextAppearance.Medium</item -->
+</menu>
