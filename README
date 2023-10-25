@@ -1,0 +1,5 @@
+# miktim's WebSocket package test app, MIT (c) 2023 miktim@mail.ru
+
+WbSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
+App bulds on Android Studio Arctic Fox | 2020.3.1 patch 2
+Gradle: compileSdk 33; minSdk 16; targetSdk 33
