@@ -139,7 +139,7 @@ public class WssClientTest {
         ws_log(null); // clear console
         try {
 //            WebSocket.setKeyStore("/nonexistentfile", ""); // reset
-            WebSocket.setTrustStore("/nonexistentfile", "");
+//            WebSocket.setTrustStore("/nonexistentfile", "");
             final WebSocket webSocket = new WebSocket();
             WsParameters wsp = new WsParameters();
             wsp.setConnectionSoTimeout(4000, true); // ping
