@@ -23,10 +23,12 @@ public class ContextUtil {
         intent.setAction(MainActivity.BROADCAST_MESSAGE);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
-
+    File keyFile(String asset) {
+        return new File(context.getFilesDir(), asset);
+    }
     boolean saveAssetAsFile(String asset) {
         try (InputStream is = context.getAssets().open(asset);
-             OutputStream os = new FileOutputStream(new File(context.getFilesDir(), asset))) {
+             OutputStream os = new FileOutputStream(keyFile(asset))) {
             byte[] buffer = new byte[512];
             int i;
             while ((i = is.read(buffer)) > -1) {

@@ -1,5 +1,24 @@
 # miktim's WebSocket package test app, MIT (c) 2023 miktim@mail.ru
 
-WbSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
-App bulds on Android Studio Arctic Fox | 2020.3.1 patch 2
+WebSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
+The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 2
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
+
+SSLServerSocket connections not working yet
+
+Test results:
+
+Emulator Nexus S:
+R API 30: Failed. Client SSLSocket (TLSv1.3 | TLSv1.2) read timeout
+Q API 29: Success.
+  API 22: Success.
+
+Real devices:
+  API 24: Success.
+  API 23: Success.
+
+Helpful links:
+
+https://stackoverflow.com/questions/43387692/ssl-java-security-nosuchalgorithmexception
+https://stackoverflow.com/questions/65059714/sslserversocket-android-step-by-step
+https://keystore-explorer.org/

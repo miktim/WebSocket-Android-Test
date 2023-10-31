@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="WebSocketTest/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="WebSocketTest/src/main/res/menu/activity_menu.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/menu/activity_menu.xml" value="0.153125" />
       </map>

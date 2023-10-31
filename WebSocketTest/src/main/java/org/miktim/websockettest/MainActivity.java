@@ -19,8 +19,11 @@ import android.widget.TextView;
 import org.miktim.websocket.WebSocket;
 
 public class MainActivity extends AppCompatActivity {
-    static String KEY_FILE = "testkeys;passphrase"; // keyFileName;password
-    //    static String KEY_FILE = "localhost.jks;password";
+//   static String KEY_FILE = "testkeys;passphrase"; // keyFileName;password
+    static String KEY_FILE = "android.jks;qwerty"; // keyFileName;password
+//    static String KEY_FILE = "localhost.key;qwerty"; // keyFileName;password
+//    static String KEY_FILE = "localhost.jks;password"; // keyFileName;password
+
     WsConsole console;
 
     @Override
@@ -38,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void finish() {
+        super.finish();
+        System.exit(0);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_menu, menu);
@@ -48,7 +57,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.WSClientServerTest) {
-            (new WsClientServerTest(this)).start();
+            (new WsClientServerTest(this, "ws")).start();
+            return true;
+        } else if (itemId == R.id.WSSClientServerTest) {
+            (new WsClientServerTest(this, "wss")).start();
             return true;
         } else if (itemId == R.id.WSSClientTest) {
             (new WssClientTest(this)).start();

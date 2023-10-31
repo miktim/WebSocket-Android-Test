@@ -21,16 +21,20 @@ public class WsClientServerTest {
     final MainActivity context;
     final ContextUtil util;
     final int MAX_MESSAGE_LENGTH = 10000; //
-    final int TEST_SHUTDOWN_TIMEOUT = 5000; //milliseconds
-    final int PORT = 8080;
-    final String REMOTE_CONNECTION = "ws://localhost:" + PORT;//
+    final int TEST_SHUTDOWN_TIMEOUT = 10000; //milliseconds
+    int PORT = 8080;
+    String REMOTE_CONNECTION;//
+    String scheme = "ws";
 
     String fragmentTest = randomString(512);
     int counter = 0;
 
-    WsClientServerTest(MainActivity activity) {
+    WsClientServerTest(MainActivity activity, String scheme) {
         context = activity;
         util = new ContextUtil(context);
+        this.scheme = scheme;
+        PORT = scheme.equals("ws") ? 8080 : 8443;
+        REMOTE_CONNECTION = scheme + "://localhost:" + PORT;
     }
 
     void ws_log(String msg) {
@@ -139,7 +143,7 @@ public class WsClientServerTest {
     WsHandler clientHandler = new WsHandler() {
         @Override
         public void onOpen(WsConnection con, String subp) {
-            ws_log("Client connected.");
+            ws_log("Client connected." + con.getSSLSessionProtocol());
 //            WsParameters wsp = con.getParameters(); // debug
         }
 
@@ -208,7 +212,7 @@ public class WsClientServerTest {
                     } else ws_log("OK");
                     ws_send(con, "ping,");
                 } else if (cmd.equals("time")) {
-                    if (++counter == 4) {
+                    if (++counter > 4) {
                         ws_log("OK");
                         con.close(WsStatus.NORMAL_CLOSURE, "Completed");
                     }
@@ -228,24 +232,34 @@ public class WsClientServerTest {
     void start() {
         ws_log(null); // clear console
         try {
-            WebSocket.setKeyStore("/nonexistentfile", ""); // reset keys
-            WebSocket.setTrustStore("/nonexistentfile", "");
+            String[] keyInfo = MainActivity.KEY_FILE.split(";");
+            util.saveAssetAsFile(keyInfo[0]);
             final WebSocket webSocket = new WebSocket(InetAddress.getByName("localhost"));
-//            final WebSocket webSocket = new WebSocket();
+            webSocket.setKeyStore(util.keyFile(keyInfo[0]), keyInfo[1]);
             WsParameters wsp = new WsParameters() //
 //                    .setConnectionSoTimeout(100, true)
-                    .setPayloadBufferLength(0); // min buffer
-
+                    .setPayloadBufferLength(2048); // min buffer
+//            String sslProtocols = "TLSv1.1 TLSv1"; //"TLSv1.3 TLSv1.2 TLSv1.1 TLSv1"
+//            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
+            wsp.setSSLParameters(null);
             ws_log("\r\nWs client/server test"
                     + "\r\nTrying to connect to " + REMOTE_CONNECTION
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                     + "\r\n");
-            final WsListener wsListener
-                    = webSocket.listen(PORT, serverHandler, wsp);
-//            sleep(100);
+            WsListener wsListener;
+
+            if (scheme.equals("wss")) {
+                wsListener
+                        = webSocket.listenSafely(PORT, serverHandler, wsp);
+            } else {
+                wsListener
+                        = webSocket.listen(PORT, serverHandler, wsp);
+            }
             final WsConnection wsConnection
-                    = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);
+                        = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);
+
+
             final Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override

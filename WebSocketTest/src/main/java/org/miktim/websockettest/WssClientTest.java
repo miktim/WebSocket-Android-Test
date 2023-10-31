@@ -13,12 +13,14 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.net.ssl.SSLParameters;
+
 public class WssClientTest {
     final MainActivity context;
     final ContextUtil util;
-    final int MAX_MESSAGE_LENGTH = 10000; //
-    final int TEST_SHUTDOWN_TIMEOUT = 15000; //milliseconds
-    final String REMOTE_CONNECTION = "wss://websocketstest.com:443/service";//
+    final int MAX_MESSAGE_LENGTH = 10000; // bytes
+    final int TEST_SHUTDOWN_TIMEOUT = 10000; // millis
+    final String REMOTE_CONNECTION = "wss://websocketstest.com/service";//
 
     String fragmentTest = randomString(512);
     int counter = 0;
@@ -138,17 +140,21 @@ public class WssClientTest {
     void start() {
         ws_log(null); // clear console
         try {
-//            WebSocket.setKeyStore("/nonexistentfile", ""); // reset
-//            WebSocket.setTrustStore("/nonexistentfile", "");
             final WebSocket webSocket = new WebSocket();
-            WsParameters wsp = new WsParameters();
-            wsp.setConnectionSoTimeout(4000, true); // ping
-//        wsp.setPayloadLength(fragmentTest.length()/2); // not work!
-            ws_log("\r\nWssClient test"
+            WsParameters wsp = new WsParameters()
+                    .setMaxMessageLength(MAX_MESSAGE_LENGTH) //
+                    .setConnectionSoTimeout(10000, true);
+            String sslProtocols = "TLSv1.2";//TLSv1.2 TLSv1.1 TLSv1 TLSv1.3"; //
+            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
+            wsp.setSSLParameters(null);
+//            wsp.setPayloadLength(fragmentTest.length()/2); // not work!
+
+            ws_log("\r\nWss client test"
                     + "\r\nTrying to connect to " + REMOTE_CONNECTION
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                     + "\r\n");
+
             final WsConnection wsConnection
                     = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);
             final Timer timer = new Timer();
@@ -158,7 +164,7 @@ public class WssClientTest {
                     wsConnection.close(WsStatus.GOING_AWAY, "Time is over!");
                     timer.cancel();
                 }
-            }, TEST_SHUTDOWN_TIMEOUT);
+            },100000);// TEST_SHUTDOWN_TIMEOUT);
         } catch (Throwable e) {
             ws_log("Unexpected: " + e);
             e.printStackTrace();
