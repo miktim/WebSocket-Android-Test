@@ -180,10 +180,10 @@ public class WebSocket {
 
             String ksPassphrase = this.keyStorePassword;
             File ksFile = this.keyStoreFile;
-            if (ksFile == null) {
-                ksPassphrase = System.getProperty("javax.net.ssl.keyStorePassword");
-                ksFile = new File(System.getProperty("javax.net.ssl.keyStore"));
-            }
+//            if (ksFile == null) {
+//                ksPassphrase = System.getProperty("javax.net.ssl.keyStorePassword");
+//                ksFile = new File(System.getProperty("javax.net.ssl.keyStore"));
+//            }
             char[] passphrase = ksPassphrase.toCharArray();
 
             ctx = SSLContext.getInstance("TLS");

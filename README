@@ -4,18 +4,16 @@ WebSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 2
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
-SSLServerSocket connections not working yet
-
 Test results:
 
 Emulator Nexus S:
-R API 30: Failed. Client SSLSocket (TLSv1.3 | TLSv1.2) read timeout
-Q API 29: Success.
-  API 22: Success.
+Android 11 API 30: Failed. TLSv1.3 | TLSv1.2 read timeout
+Android 10 API 29: Success.
+Android 5  API 22: Success.
 
 Real devices:
-  API 24: Success.
-  API 23: Success.
+Android 7  API 24: Success.
+Android 6  API 23: Success.
 
 Helpful links:
 
