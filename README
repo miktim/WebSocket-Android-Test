@@ -7,9 +7,12 @@ See https://source.android.com/docs/setup/start/older-versions#jdk
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 2
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
+3.4.2 resolved bug: API 30 TLSv1.3 | TLSv1.2 WsConnection.readFully() read timeout
+
 Test results:
-Resolved 3.4.2:  API 30 TLSv1.3 | TLSv1.2 WsConnection.readFully() read timeout
+
 Emulator Nexus S:
+All emulators: WebSocket dirty local closure (not a critical error)
 Android 11 API 30: Success.
 Android 10 API 29: Success.
 Android 5  API 22: Success.
@@ -17,10 +20,12 @@ Android 5  API 22: Success.
 Real devices:
 Android 7  API 24: Success.
 Android 6  API 23: Success.
+Harmony OS 3.0: Success.
 
 Helpful links:
 
 https://stackoverflow.com/questions/6343166/how-can-i-fix-android-os-networkonmainthreadexception
+https://stackoverflow.com/questions/51902629/how-to-allow-all-network-connection-types-http-and-https-in-android-9-pie
 https://stackoverflow.com/questions/43387692/ssl-java-security-nosuchalgorithmexception
 https://stackoverflow.com/questions/65059714/sslserversocket-android-step-by-step
 https://keystore-explorer.org/
