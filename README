@@ -1,13 +1,16 @@
 # miktim's WebSocket package test app, MIT (c) 2023 miktim@mail.ru
 
 WebSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
+The websocket jar file was built using JDK 1.8.0 with the target JDK 6
+See https://source.android.com/docs/setup/start/older-versions#jdk 
+
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 2
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
 Test results:
-
+Resolved 3.4.2:  API 30 TLSv1.3 | TLSv1.2 WsConnection.readFully() read timeout
 Emulator Nexus S:
-Android 11 API 30: Failed. TLSv1.3 | TLSv1.2 read timeout
+Android 11 API 30: Success.
 Android 10 API 29: Success.
 Android 5  API 22: Success.
 
@@ -17,6 +20,7 @@ Android 6  API 23: Success.
 
 Helpful links:
 
+https://stackoverflow.com/questions/6343166/how-can-i-fix-android-os-networkonmainthreadexception
 https://stackoverflow.com/questions/43387692/ssl-java-security-nosuchalgorithmexception
 https://stackoverflow.com/questions/65059714/sslserversocket-android-step-by-step
 https://keystore-explorer.org/

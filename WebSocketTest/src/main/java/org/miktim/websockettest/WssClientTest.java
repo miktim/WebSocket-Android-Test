@@ -8,12 +8,9 @@ import org.miktim.websocket.WsStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.net.ssl.SSLParameters;
 
 public class WssClientTest {
     final MainActivity context;
@@ -144,8 +141,8 @@ public class WssClientTest {
             WsParameters wsp = new WsParameters()
                     .setMaxMessageLength(MAX_MESSAGE_LENGTH) //
                     .setConnectionSoTimeout(10000, true);
-            String sslProtocols = "TLSv1.2";//TLSv1.2 TLSv1.1 TLSv1 TLSv1.3"; //
-            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
+//            String sslProtocols = "TLSv1.2";//TLSv1.2 TLSv1.1 TLSv1 TLSv1.3"; //
+//            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
             wsp.setSSLParameters(null);
 //            wsp.setPayloadLength(fragmentTest.length()/2); // not work!
 

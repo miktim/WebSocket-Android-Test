@@ -57,15 +57,18 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
         if (itemId == R.id.WSClientServerTest) {
-            (new WsClientServerTest(this, "ws")).start();
+            (new WsWssClientServerTest(this, "ws")).start();
             return true;
         } else if (itemId == R.id.WSSClientServerTest) {
-            (new WsClientServerTest(this, "wss")).start();
+            (new WsWssClientServerTest(this, "wss")).start();
             return true;
         } else if (itemId == R.id.WSSClientTest) {
             (new WssClientTest(this)).start();
             return true;
-        } else if (itemId == R.id.Exit) {
+        }/* else if (itemId == R.id.ClientServerStressTest){
+            (new ClientServerStressTest(this)).start();
+            return true;
+        } */else if (itemId == R.id.Exit) {
             finish();
             return true;
         }
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         public void println(String msg) {
             Log.d("", msg);
             consoleTextView.append(msg + "\n\r");
-        }
+         }
         public void erase() {
             consoleTextView.setText("");
         }
