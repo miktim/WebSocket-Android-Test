@@ -9,7 +9,8 @@ Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
 3.4.2 resolved bug: API 30 TLSv1.3 | TLSv1.2 WsConnection.readFully() read timeout
 3.4.3 resolved bug: WebSocket dirty local closure (in some cases it is normal)
-Problems with plain connections to localhost have not been fixed
+Problems with plain connections to localhost have not been fixed:
+  read() from socket input stream hang after connection is established
 
 Test results:
 
