@@ -1,3 +1,8 @@
+/*
+ * Secure WebSocket client test. (c) websocketstest.com
+ * Adapted by miktim@mail.ru, march 2021
+ */
+
 package org.miktim.websockettest;
 
 import org.miktim.websocket.WebSocket;

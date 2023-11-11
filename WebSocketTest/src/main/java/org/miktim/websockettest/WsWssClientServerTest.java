@@ -1,3 +1,8 @@
+/*
+ * WebSocket client-server test. (c) websocketstest.com
+ * Adapted by miktim@mail.ru, march 2021
+ */
+
 package org.miktim.websockettest;
 
 import org.miktim.websocket.WebSocket;
@@ -101,7 +106,7 @@ public class WsWssClientServerTest {
                         conn.send(cmd);
                         break;
                     case ("ping"):
-                        sleep(500);
+                        sleep(1000);
                         if(conn.isOpen()) conn.send("ping,success");
                         break;
                     case ("fragments"):
@@ -109,7 +114,7 @@ public class WsWssClientServerTest {
                         break;
                     case ("timer"):
                         SimpleDateFormat formatter
-                                = new SimpleDateFormat ("yyyy/mm/dd hh:mm:ss");
+                                = new SimpleDateFormat ("yyyy/MM/dd hh:mm:ss");
                         while (conn.isOpen()) {
                             conn.send("time,"+ formatter.format(new Date()));
                             sleep(1000);
@@ -145,7 +150,7 @@ public class WsWssClientServerTest {
         public void onOpen(WsConnection con, String subp) {
             String protocol = con.getSSLSessionProtocol();
             ws_log("Client connected: " +
-                    (protocol == null ? "plain" : protocol));
+                    (protocol == null ? "clear text" : protocol));
 //            WsParameters wsp = con.getParameters(); // debug
         }
 
@@ -239,8 +244,8 @@ public class WsWssClientServerTest {
             if(scheme.equals("wss"))
                 webSocket.setKeyFile(util.keyFile(keyInfo[0]), keyInfo[1]);
             WsParameters wsp = new WsParameters() //
-//                    .setConnectionSoTimeout(100, true)
-                    .setPayloadBufferLength(2048); // min buffer
+                    .setConnectionSoTimeout(200, true)
+                    .setPayloadBufferLength(0); // min buffer
 //            String sslProtocols = "TLSv1.2"; //"TLSv1.3 TLSv1.2 TLSv1.1 TLSv1"
 //            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
 //            wsp.setSSLParameters(null);

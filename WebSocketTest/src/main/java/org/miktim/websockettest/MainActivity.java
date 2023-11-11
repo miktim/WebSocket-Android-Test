@@ -1,3 +1,7 @@
+/*
+ * WebSocket test. MIT (c) 2023 miktim@mail.ru
+ */
+
 package org.miktim.websockettest;
 
 import androidx.annotation.NonNull;
@@ -19,10 +23,9 @@ import android.widget.TextView;
 import org.miktim.websocket.WebSocket;
 
 public class MainActivity extends AppCompatActivity {
-//   static String KEY_FILE = "testkeys;passphrase"; // keyFileName;password
-    static String KEY_FILE = "android.jks;qwerty"; // keyFileName;password
-//    static String KEY_FILE = "localhost.key;qwerty"; // keyFileName;password
-//    static String KEY_FILE = "localhost.jks;password"; // keyFileName;password
+// keyFileName;password
+    static String KEY_FILE = "localhost.bks;qwerty"; // BKS type
+//    static String KEY_FILE = "localhost.jks;qwerty"; // PKCS #12
 
     WsConsole console;
 

@@ -7,8 +7,7 @@ See https://source.android.com/docs/setup/start/older-versions#jdk
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 4
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
-3.4.3 fixed bug: WebSocket dirty local closure (in some cases it is normal)
-* Occasional problems with clear text connections to localhost have not been fixed:
+Occasional problems with clear text connections to localhost have not been fixed:
   read() from socket input stream hang after connection is established
 
 Tested on:
@@ -21,7 +20,7 @@ Android 5  API 22
 Real devices:
 Android 7  API 24
 Android 6  API 23
-Harmony OS 3.0: clear text connections to localhost failed
+Harmony OS 3.0
 
 Helpful links:
 
