@@ -7,7 +7,7 @@ See https://source.android.com/docs/setup/start/older-versions#jdk
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 4
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
-Occasional problems with clear text connections to localhost have not been fixed:
+3.4.5 fixed: occasional problems with clear text connections to localhost have not been fixed:
   read() from socket input stream hang after connection is established
 
 Tested on:
