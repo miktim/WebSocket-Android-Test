@@ -8,9 +8,9 @@ The application was created and tested in Android Studio Arctic Fox | 2020.3.1 p
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
 3.4.5 fixed: occasional problem with clear text connections to localhost:
-  read() from socket input stream hang after connection is established
+  test hang after connection is established.
 
-Tested on:
+The test was successfully passed on:
 
 Emulator Nexus S:
 Android 11 API 30
