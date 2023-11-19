@@ -7,8 +7,7 @@ package org.miktim.websockettest;
 
 import org.miktim.websocket.WebSocket;
 import org.miktim.websocket.WsConnection;
-import org.miktim.websocket.WsHandler;
-import org.miktim.websocket.WsListener;
+import org.miktim.websocket.WsServer;
 import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsStatus;
 
@@ -65,7 +64,7 @@ public class WsWssClientServerTest {
         this.wait(millis);
     }
 
-    WsHandler listenerHandler = new WsHandler(){
+    WsConnection.EventHandler serverSideHandler = new WsConnection.EventHandler(){
         String cmd = "";
 
         @Override
@@ -73,9 +72,9 @@ public class WsWssClientServerTest {
             WsConnection[] conns = conn.listConnections(); //
             try {
                 conn.send("connected,");
-                ws_log("Listener handler started.");
+                ws_log("Server side opened.");
             } catch (IOException e) {
-                ws_log("Listener handler onOpen send() error: " + e);
+                ws_log("Server side onOpen send() error: " + e);
                 e.printStackTrace();
             }
         }
@@ -88,13 +87,13 @@ public class WsWssClientServerTest {
                 messageLen = is.read(messageBuffer);
                 if (is.read() != -1) {
                     conn.close(WsStatus.MESSAGE_TOO_BIG, "Message too big");
-                    ws_log("Listener handler: message too big");
+                    ws_log("Server side: message too big");
                     return;
                 }
                 if (isUTF8Text) {
                     cmd = new String(messageBuffer, 0, messageLen, "UTF-8");
                 } else {
-                    ws_log("Listener handler: unexpected binary. Ignored");
+                    ws_log("Server side: unexpected binary. Ignored");
                     return;
                 }
 
@@ -121,31 +120,26 @@ public class WsWssClientServerTest {
                         }
                         break;
                     default:
-                        ws_log("Listener handler: unknown command. Ignored. ");
+                        ws_log("Server side: unknown command. Ignored. ");
                 }
             } catch (Exception e) {
-                ws_log("Listener handler onMessage error: " + e);
+                ws_log("Server side onMessage error: " + e);
                 e.printStackTrace();
             }
         }
 
         @Override
         public void onError(WsConnection conn, Throwable e) {
-            if (conn == null) {
-                ws_log("Listener CRASHED! " + e);
-                e.printStackTrace();
-                return;
-            }
-            ws_log("Listener handler onError: " + e);
+            ws_log("Server side onError: " + e);
         }
 
         @Override
         public void onClose(WsConnection conn, WsStatus closeStatus) {
-            ws_log("Listener handler closed. "+ closeStatus);
+            ws_log("Server side closed. "+ closeStatus);
         }
     };
 
-    WsHandler clientHandler = new WsHandler() {
+    WsConnection.EventHandler clientHandler = new WsConnection.EventHandler() {
         @Override
         public void onOpen(WsConnection con, String subp) {
             String protocol = con.getSSLSessionProtocol();
@@ -254,14 +248,14 @@ public class WsWssClientServerTest {
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                     + "\r\n");
-            WsListener wsListener;
+            WsServer wsServer;
 
             if (scheme.equals("wss")) {
-                wsListener
-                        = webSocket.listenSafely(PORT, listenerHandler, wsp);
+                wsServer
+                        = webSocket.SecureServer(PORT, serverSideHandler, wsp).launch();
             } else {
-                wsListener
-                        = webSocket.listen(PORT, listenerHandler, wsp);
+                wsServer
+                        = webSocket.Server(PORT, serverSideHandler, wsp).launch();
             }
             final WsConnection wsConnection
                         = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);

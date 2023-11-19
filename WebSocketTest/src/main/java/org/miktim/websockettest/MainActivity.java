@@ -68,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.WSSClientTest) {
             (new WssClientTest(this)).start();
             return true;
-        }/* else if (itemId == R.id.ClientServerStressTest){
+        } else if (itemId == R.id.ClientServerStressTest){
             (new ClientServerStressTest(this)).start();
             return true;
-        } */else if (itemId == R.id.Exit) {
+        } else if (itemId == R.id.Exit) {
             finish();
             return true;
         }

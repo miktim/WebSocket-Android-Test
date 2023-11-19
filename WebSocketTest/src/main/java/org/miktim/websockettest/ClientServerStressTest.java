@@ -1,15 +1,15 @@
 package org.miktim.websockettest;
 
+import static java.lang.Thread.sleep;
+
 import org.miktim.websocket.WebSocket;
 import org.miktim.websocket.WsConnection;
-import org.miktim.websocket.WsHandler;
-import org.miktim.websocket.WsListener;
+import org.miktim.websocket.WsServer;
 import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,7 +17,8 @@ public class ClientServerStressTest {
     final MainActivity context;
     final ContextUtil util;
     final int TEST_SHUTDOWN_TIMEOUT = 10000; //milliseconds
-    final int BACKLOG = 2;
+    final int PORT = 8080;
+    final String ADDRESS = "ws://localhost:" + PORT;
 
     ClientServerStressTest(MainActivity context) {
         this.context = context;
@@ -34,74 +35,6 @@ public class ClientServerStressTest {
     }
 
     WebSocket webSocket = null;
-    WsListener pListener = null;
-    WsListener sListener = null;
-
-    WsHandler listenerHandler = new WsHandler() {
-        @Override
-        public void onOpen(WsConnection conn, String subProtocol) {
-            int testId = Integer.parseInt(subProtocol == null ? "0" : subProtocol);
-        }
-
-        @Override
-        public void onMessage(WsConnection conn, InputStream is, boolean isUTF8Text) {
-            String subProtocol = conn.getSubProtocol();
-            int testId = Integer.parseInt(subProtocol == null ? "0" : subProtocol);
-            try {
-                conn.send(is, isUTF8Text);
-            } catch (IOException e) {
-                ws_log("Test" + testId + "Listener send error: " + e);
-            }
-        }
-
-        @Override
-        public void onError(WsConnection conn, Throwable e) {
-            String subProtocol = conn.getSubProtocol();
-            int testId = Integer.parseInt(subProtocol == null ? "0" : subProtocol);
-            if(conn == null) ws_log("Listener interrupted: " + e);
-            else ws_log("Test" + testId + " Listener onError: " + e);
-        }
-
-        @Override
-        public void onClose(WsConnection conn, WsStatus closeStatus) {
-            String subProtocol = conn.getSubProtocol();
-            int testId = Integer.parseInt(subProtocol == null ? "0" : subProtocol);
-            ws_log("Test" + testId + " " + closeStatus);
-
-        }
-    };
-
-    WsHandler clientHandler = new WsHandler() {
-        @Override
-        public void onOpen(WsConnection conn, String subProtocol) {
-            try {
-                conn.send("Blah Blah");
-            } catch (IOException e) {
-
-            }
-        }
-
-        @Override
-        public void onMessage(WsConnection conn, InputStream is, boolean isUTF8Text) {
-            String subProtocol = conn.getSubProtocol();
-            int testId = Integer.parseInt(subProtocol == null ? "0" : subProtocol);
-            try {
-                conn.send(is, isUTF8Text);
-            } catch (IOException e) {
-            }
-        }
-
-        @Override
-        public void onError(WsConnection conn, Throwable e) {
-        }
-
-        @Override
-        public void onClose(WsConnection conn, WsStatus closeStatus) {
-            String subProtocol = conn.getSubProtocol();
-            int testId = Integer.parseInt(subProtocol == null ? "0" : subProtocol);
-            ws_log("Test" + testId + " " + closeStatus);
-        }
-    };
 
     void start() {
         ws_log(null); // clear console
@@ -111,65 +44,140 @@ public class ClientServerStressTest {
                 + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                 + "\r\n");
 
+        WsConnection.EventHandler handler = new WsConnection.EventHandler() {
+
+            @Override
+            public void onOpen(WsConnection conn, String subp) {
+                try {
+                    if (subp.equals("1") && conn.isClientSide()) {
+// message too big
+                        conn.send(new byte[conn.getParameters()
+                                .getMaxMessageLength() + 1]);
+                    } else if (subp.equals("2") && conn.isClientSide()) {
+// message queue overflow
+                        for (int i = 0; i < 100; i++) {
+                            conn.send(new byte[conn.getParameters().getMaxMessageLength()]);
+                            conn.send("Blah Blah Blah Blah Blah Blah Blah Blah Blah Blah ");
+                        }
+                    } else if (subp.equals("3")) {
+// there is nothing to do, wait for a timeout
+                    } else if (subp.equals("4")) {
+// Server interrupt
+                        conn.send((conn.isClientSide()
+                                ? "Hello, Server!" : "Hello, client!"));
+                    }
+                } catch (IOException e) {
+                    ws_log(String.format("[%s] %s send Error %s",
+                            conn.getSubProtocol(),
+                            (conn.isClientSide() ? "Client" : "Server side"),
+                            e.toString()
+                    ));
+                }
+            }
+
+            @Override
+            public void onClose(WsConnection conn, WsStatus status) {
+                ws_log(String.format("[%s] %s onClose %s%s",
+                        (conn.getSubProtocol() == null ? "0" : conn.getSubProtocol()),
+                        (conn.isClientSide() ? "Client" : "Server side"),
+                        status.toString(),
+                        (status.error != null ? " Error " + status.error.toString() : "")
+                ));
+            }
+
+            @Override
+            public void onError(WsConnection conn, Throwable e) {
+            }
+
+            @Override
+            public void onMessage(WsConnection conn, InputStream is, boolean isText) {
+                String subp = conn.getSubProtocol();
+                try {
+                    if (subp.equals("2")) {
+// message queue overflow
+                        if (conn.isOpen()) {
+                            conn.send(is, isText);
+                        }
+                    } else if (subp.equals("4")) {
+// terminate server
+                        if (conn.isOpen()) {
+                            conn.send(is, isText);
+                        }
+                    }
+
+                } catch (IOException e) {
+                    ws_log(String.format("[%s] %s onMessage send error %s",
+                            subp,
+                            (conn.isClientSide() ? "Client" : "Server side"),
+                            e.toString()));
+                }
+
+            }
+
+        };
+
         try {
-            webSocket = new WebSocket(InetAddress.getByName("localhost"));
-            String[] keyInfo = MainActivity.KEY_FILE.split(";");
-            util.saveAssetAsFile(keyInfo[0]);
-            webSocket.setKeyFile(util.keyFile(keyInfo[0]), keyInfo[1]);
-            WsParameters wParam = (new WsParameters())
-                    .setSubProtocols("0 1 2 3 4 5 6 7 8 9".split(" "))
-                    .setBacklog(BACKLOG)
-                    .setMaxMessageLength(0);
-            pListener = webSocket.listen(8080, listenerHandler, wParam);
-            sListener = webSocket.listenSafely(8443, listenerHandler, wParam);
+            final WebSocket webSocket = new WebSocket();
+            final WsParameters wsp = new WsParameters() // client/server parameters
+                    .setSubProtocols("0,1,2,3,4,5,6,7,8,9".split(","))
+                    //               .setMaxMessageLength(2000)
+                    .setPayloadBufferLength(0);// min payload length
 
-// Try plain connection to TLS listener
-            ws_log("Try plain connection to TLS listener");
-            wParam.setSubProtocols(new String[]{"0"});
-            WsConnection conn = webSocket.connect("ws://localhost:8443", clientHandler, wParam);
-            if(conn.getStatus().error instanceof java.net.SocketException)
-                ws_log("OK "+conn.getStatus().error);
-            else ws_log("Failed!");
+            final WsServer wsServer = webSocket.Server(PORT, handler, wsp);
+            wsServer.start();
 
-
-// Try TLS connection without trusted key
-            webSocket.resetKeyFile();
-            ws_log("Try TLS connection without trusted key");
-            wParam.setSubProtocols(new String[]{"1"});
-            conn = webSocket.connect("wss://localhost:8443", clientHandler, wParam);
-            if(conn.getStatus().error instanceof javax.net.ssl.SSLHandshakeException)
-                ws_log("OK " + conn.getStatus().error);
-            else ws_log("Failed!");
-
-// Try MESSAGE_TOO_BIG
-            wParam.setSubProtocols(new String[]{"2"});
-            conn = webSocket
-                    .connect("ws://localhost:8080", clientHandler, wParam);
-
-// Test interrupt, closing client conns
-            wParam.setSubProtocols(new String[]{"3"});
-            for (int i = 0; i < 3; i++) {
-                conn = webSocket.connect("ws://localhost:8080",clientHandler,wParam);
-            }
-            pListener.interrupt();
-            for(WsConnection con : webSocket.listConnections()){
-                con.close();
-            }
-
-            final Timer timer = new Timer();
+            final Timer timer = new Timer(true);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    ws_log("\n\rCompleted\n\r");
                     webSocket.closeAll("Time is over!");
                     timer.cancel();
                 }
             }, TEST_SHUTDOWN_TIMEOUT);
 
-        } catch (Throwable e) {
-            webSocket.closeAll("");
-            e.printStackTrace();
-            ws_log("Unexpected " + e);
+            ws_log("\r\nWsStressTest "
+                    + WebSocket.VERSION
+                    + "\r\nClient try to connect to " + ADDRESS
+                    + "\r\nTest will be terminated after "
+                    + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
+                    + "\r\n");
+
+            ws_log("0. Try connecting via TLS to a cleartext server:");
+            WsConnection conn = webSocket.connect("wss://localhost:" + PORT, handler, wsp);
+            conn.join();
+
+            ws_log("\r\n0. Try unsupported WebSocket subProtocol");
+            wsp.setSubProtocols(new String[]{"10"});
+            conn = webSocket.connect(ADDRESS, handler, wsp);
+            conn.join();
+
+            ws_log("\r\n1. Try message too big");
+            wsp.setSubProtocols(new String[]{"1"});
+            conn = webSocket.connect(ADDRESS, handler, wsp);
+            conn.join();
+
+            ws_log("\r\n2. Try message queue overflow:");
+            wsp.setSubProtocols(new String[]{"2"})
+                    .setPayloadBufferLength(wsp.getMaxMessageLength()); // min
+            conn = webSocket.connect(ADDRESS, handler, wsp);
+            conn.join();
+
+            ws_log("\r\n3. Try connection timeout:");
+            wsp.setSubProtocols(new String[]{"3"})
+                    .setConnectionSoTimeout(400, false);
+            conn = webSocket.connect(ADDRESS, handler, wsp);
+            conn.join();
+
+            ws_log("\r\n4. Try interrupt Server:");
+            wsp.setSubProtocols(new String[]{"4"});
+            webSocket.connect(ADDRESS, handler, wsp);
+            webSocket.connect(ADDRESS, handler, wsp);
+            webSocket.connect(ADDRESS, handler, wsp);
+            webSocket.connect(ADDRESS, handler, wsp);
+            sleep(500);
+            wsServer.interrupt();
+        } catch (Exception e) {
+            ws_log("Unexpected: " + e);
         }
     }
 }

@@ -19,7 +19,7 @@ android {
 //        minSdk 24
         targetSdk 33
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,7 +42,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.6.0'
 //    implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation files('libs/websocket-3.4.5.jar')
+//    implementation files('libs/websocket-4.0.0.jar')
+    implementation files('libs/websocket-4.0.0.jar')
 
 //    testImplementation 'junit:junit:4.+'
 //    androidTestImplementation 'androidx.test.ext:junit:1.1.5'

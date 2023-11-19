@@ -7,7 +7,7 @@ package org.miktim.websockettest;
 
 import org.miktim.websocket.WebSocket;
 import org.miktim.websocket.WsConnection;
-import org.miktim.websocket.WsHandler;
+import org.miktim.websocket.WsConnection.EventHandler;
 import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsStatus;
 
@@ -51,7 +51,7 @@ public class WssClientTest {
         return randomstring.toString();
     }
 
-    WsHandler clientHandler = new WsHandler() {
+    WsConnection.EventHandler clientHandler = new WsConnection.EventHandler() {
         @Override
         public void onOpen(WsConnection con, String subp) {
             ws_log("Connected. " + con.getSSLSessionProtocol());
