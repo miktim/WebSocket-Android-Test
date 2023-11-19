@@ -10,17 +10,20 @@ Gradle: compileSdk 33; minSdk 16; targetSdk 33
 3.4.5 fixed: occasional problem with clear text connections to localhost:
   test hang after connection is established.
 
-The test was successfully passed on:
+4.0.0 API 22,23 Failed on close SSLSocket: java.lang.UnsupportedOperationException:
+  at javax.net.ssl.SSLSocket.shutdownOutput
+
+The test was passed on:
 
 Emulator Nexus S:
-Android 11 API 30
-Android 10 API 29
-Android 5  API 22
+Android 11 API 30 Ok
+Android 10 API 29 Ok
+Android 5  API 22 Failed
 
 Real devices:
-Android 7  API 24
-Android 6  API 23
-Harmony OS 3.0
+Android 7  API 24 Ok
+Android 6  API 23 Failed
+Harmony OS 3.0 Ok
 
 Helpful links:
 
