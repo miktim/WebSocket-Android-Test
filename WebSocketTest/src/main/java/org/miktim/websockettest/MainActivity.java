@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        console.erase();
         int itemId = item.getItemId();
         if (itemId == R.id.WSClientServerTest) {
             (new WsWssClientServerTest(this, "ws")).start();
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             (new WssClientTest(this)).start();
             return true;
         } else if (itemId == R.id.ClientServerStressTest){
-            (new ClientServerStressTest(this)).start();
+            (new WsClientServerStressTest(this)).start();
             return true;
         } else if (itemId == R.id.Exit) {
             finish();

@@ -267,6 +267,7 @@ public class WsWssClientServerTest {
                 public void run() {
                     webSocket.closeAll("Time is over!");
                     timer.cancel();
+                    ws_log("\r\nCompleted.");
                 }
             }, TEST_SHUTDOWN_TIMEOUT);
         } catch (Throwable e) {

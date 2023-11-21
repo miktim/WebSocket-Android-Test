@@ -13,14 +13,14 @@ import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ClientServerStressTest {
+public class WsClientServerStressTest {
     final MainActivity context;
     final ContextUtil util;
     final int TEST_SHUTDOWN_TIMEOUT = 10000; //milliseconds
     final int PORT = 8080;
     final String ADDRESS = "ws://localhost:" + PORT;
 
-    ClientServerStressTest(MainActivity context) {
+    WsClientServerStressTest(MainActivity context) {
         this.context = context;
         util = new ContextUtil(context);
     }
@@ -38,11 +38,6 @@ public class ClientServerStressTest {
 
     void start() {
         ws_log(null); // clear console
-        ws_log("\r\nClient-server stress test"
-//                + "\r\nBacklog " + BACKLOG
-                + "\r\nTest will be terminated after "
-                + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
-                + "\r\n");
 
         WsConnection.EventHandler handler = new WsConnection.EventHandler() {
 
@@ -132,11 +127,12 @@ public class ClientServerStressTest {
                 public void run() {
                     webSocket.closeAll("Time is over!");
                     timer.cancel();
+//                    ws_log("\r\nCompleted.");
                 }
             }, TEST_SHUTDOWN_TIMEOUT);
 
-            ws_log("\r\nWsStressTest "
-                    + WebSocket.VERSION
+            ws_log("\r\nWs client-server stress test "
+//                    + WebSocket.VERSION
                     + "\r\nClient try to connect to " + ADDRESS
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"

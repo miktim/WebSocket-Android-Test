@@ -165,6 +165,7 @@ public class WssClientTest {
                 public void run() {
                     wsConnection.close(WsStatus.GOING_AWAY, "Time is over!");
                     timer.cancel();
+                    ws_log("\r\nCompleted.");
                 }
             },100000);// TEST_SHUTDOWN_TIMEOUT);
         } catch (Throwable e) {
