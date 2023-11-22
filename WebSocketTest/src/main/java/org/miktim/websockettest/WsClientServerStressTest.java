@@ -16,6 +16,7 @@ import java.util.TimerTask;
 public class WsClientServerStressTest {
     final MainActivity context;
     final ContextUtil util;
+    static final int MAX_CLIENT_CONNECTIONS = 3; // allowed by server
     final int TEST_SHUTDOWN_TIMEOUT = 10000; //milliseconds
     final int PORT = 8080;
     final String ADDRESS = "ws://localhost:" + PORT;
@@ -111,15 +112,31 @@ public class WsClientServerStressTest {
 
         };
 
+        WsServer.EventHandler serverHandler = new WsServer.EventHandler() {
+            @Override
+            public void onStart(WsServer server) {
+                ws_log("Server started");
+            }
+
+            @Override
+            public boolean onAccept(WsServer server, WsConnection conn) {
+                return server.listConnections().length < MAX_CLIENT_CONNECTIONS;
+            }
+
+            @Override
+            public void onStop(WsServer server, Exception e) {
+                if(server.isInterrupted())
+                    ws_log("Server interrupted" + (e != null ? " Error " + e : ""));
+                else ws_log("Server closed");
+            }
+        };
+
         try {
             final WebSocket webSocket = new WebSocket();
             final WsParameters wsp = new WsParameters() // client/server parameters
                     .setSubProtocols("0,1,2,3,4,5,6,7,8,9".split(","))
                     //               .setMaxMessageLength(2000)
                     .setPayloadBufferLength(0);// min payload length
-
-            final WsServer wsServer = webSocket.Server(PORT, handler, wsp);
-            wsServer.start();
 
             final Timer timer = new Timer(true);
             timer.schedule(new TimerTask() {
@@ -134,44 +151,55 @@ public class WsClientServerStressTest {
             ws_log("\r\nWs client-server stress test "
 //                    + WebSocket.VERSION
                     + "\r\nClient try to connect to " + ADDRESS
+                    + "\r\nConnections allowed by server: " + MAX_CLIENT_CONNECTIONS
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                     + "\r\n");
 
-            ws_log("0. Try connecting via TLS to a cleartext server:");
+            final WsServer wsServer = webSocket.Server(PORT, handler, wsp)
+                    .setHandler(serverHandler).launch();
+//            wsServer.setPriority(Thread.MAX_PRIORITY);
+
+            ws_log("0. Connecting via TLS to a cleartext server:");
             WsConnection conn = webSocket.connect("wss://localhost:" + PORT, handler, wsp);
             conn.join();
 
-            ws_log("\r\n0. Try unsupported WebSocket subProtocol");
+            ws_log("\r\n0. Unsupported WebSocket subProtocol");
             wsp.setSubProtocols(new String[]{"10"});
             conn = webSocket.connect(ADDRESS, handler, wsp);
             conn.join();
 
-            ws_log("\r\n1. Try message too big");
+            ws_log("\r\n1. Message too big");
             wsp.setSubProtocols(new String[]{"1"});
             conn = webSocket.connect(ADDRESS, handler, wsp);
             conn.join();
 
-            ws_log("\r\n2. Try message queue overflow:");
+            ws_log("\r\n2. Message queue overflow:");
             wsp.setSubProtocols(new String[]{"2"})
                     .setPayloadBufferLength(wsp.getMaxMessageLength()); // min
             conn = webSocket.connect(ADDRESS, handler, wsp);
             conn.join();
 
-            ws_log("\r\n3. Try connection timeout:");
+            ws_log("\r\n3. Trying connection timeout:");
             wsp.setSubProtocols(new String[]{"3"})
                     .setConnectionSoTimeout(400, false);
             conn = webSocket.connect(ADDRESS, handler, wsp);
             conn.join();
 
-            ws_log("\r\n4. Try interrupt Server:");
+            ws_log("\r\n4. Trying to interrupt Server:");
             wsp.setSubProtocols(new String[]{"4"});
-            webSocket.connect(ADDRESS, handler, wsp);
-            webSocket.connect(ADDRESS, handler, wsp);
-            webSocket.connect(ADDRESS, handler, wsp);
-            webSocket.connect(ADDRESS, handler, wsp);
-            sleep(500);
+            for (int i = 0; i < MAX_CLIENT_CONNECTIONS + 2; i++) {
+                webSocket.connect(ADDRESS, handler, wsp);
+                sleep(50); // without delay, local server does not have time to react
+            }
             wsServer.interrupt();
+            sleep(50);
+            ws_log("\r\n5. Attempt to connect to interrupted server:");
+            try {
+                webSocket.connect(ADDRESS, handler, wsp);
+            } catch (IOException e) {
+                ws_log("" + e);
+            }
         } catch (Exception e) {
             ws_log("Unexpected: " + e);
         }

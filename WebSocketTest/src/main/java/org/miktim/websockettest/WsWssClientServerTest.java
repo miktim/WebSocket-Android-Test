@@ -250,6 +250,7 @@ public class WsWssClientServerTest {
                     + "\r\n");
             WsServer wsServer;
 
+
             if (scheme.equals("wss")) {
                 wsServer
                         = webSocket.SecureServer(PORT, serverSideHandler, wsp).launch();
