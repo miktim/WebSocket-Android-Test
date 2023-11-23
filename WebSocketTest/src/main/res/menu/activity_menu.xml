@@ -6,9 +6,10 @@
         android:title="WSS client-server test"  />
     <item android:id="@+id/WSSClientTest"
         android:title="WSS client test"  />
+    <!--item android:id="@+id/WSServerTest"
+        android:title="WS server test"  /-->
     <item android:id="@+id/ClientServerStressTest"
-        android:title="Client-server stress test"  />
+        android:title="WS client-server stress test"  />
     <item android:id="@+id/Exit"
         android:title="Exit" />
-    <!--item android:textSize>@android:style/TextAppearance.Medium</item -->
 </menu>

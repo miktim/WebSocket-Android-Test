@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class WsClientServerStressTest {
+public class WsClientServerStressTest extends Thread {
     final MainActivity context;
     final ContextUtil util;
     static final int MAX_CLIENT_CONNECTIONS = 3; // allowed by server
@@ -37,7 +37,7 @@ public class WsClientServerStressTest {
 
     WebSocket webSocket = null;
 
-    void start() {
+    public void run() {
         ws_log(null); // clear console
 
         WsConnection.EventHandler handler = new WsConnection.EventHandler() {

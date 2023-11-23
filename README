@@ -7,7 +7,7 @@ See https://source.android.com/docs/setup/start/older-versions#jdk
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 4
 Gradle: compileSdk 33; minSdk 16; targetSdk 33
 
-3.4.5 fixed: occasional problem with clear text connections to localhost:
+3.4.5 fixed bug: occasional problem with clear text connections to localhost:
   test hang after connection is established.
 
 4.0.1 API 22,23 fixed: java.lang.UnsupportedOperationException:
@@ -16,6 +16,7 @@ Gradle: compileSdk 33; minSdk 16; targetSdk 33
 The test was passed on:
 
 Emulator Nexus S:
+Android 13 API 33 Ok
 Android 11 API 30 Ok
 Android 10 API 29 Ok
 Android 5  API 22 Ok
@@ -23,7 +24,7 @@ Android 5  API 22 Ok
 Emulator Pixel 5:
 Android 5  API 21 Ok
 Android 4.1 API 16 WSS client-server test failed: java.io.IOException: Wrong version of key store.
-    BKS-v1 key file will solve this problem
+    BKS-V1 type key file will solve this problem
 
 Real devices:
 Android 7  API 24 Ok

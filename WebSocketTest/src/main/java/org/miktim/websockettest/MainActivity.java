@@ -69,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.WSSClientTest) {
             (new WssClientTest(this)).start();
             return true;
+//        } else if (itemId == R.id.WSServerTest) {
+//            (new WsServerTest(this)).start();
+//            return true;
         } else if (itemId == R.id.ClientServerStressTest){
             (new WsClientServerStressTest(this)).start();
             return true;

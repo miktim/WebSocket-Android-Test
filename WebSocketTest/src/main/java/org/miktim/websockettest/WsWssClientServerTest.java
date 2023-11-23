@@ -25,7 +25,7 @@ public class WsWssClientServerTest {
     final MainActivity context;
     final ContextUtil util;
     final int MAX_MESSAGE_LENGTH = 10000; //
-    final int TEST_SHUTDOWN_TIMEOUT = 10000; //milliseconds
+    final int TEST_SHUTDOWN_TIMEOUT = 7000; //milliseconds
     int PORT = 8080;
     String REMOTE_CONNECTION;//
     String scheme = "ws";
@@ -267,7 +267,7 @@ public class WsWssClientServerTest {
                 public void run() {
                     webSocket.closeAll("Time is over!");
                     timer.cancel();
-                    ws_log("\r\nCompleted.");
+//                    ws_log("\r\nCompleted.");
                 }
             }, TEST_SHUTDOWN_TIMEOUT);
         } catch (Throwable e) {
