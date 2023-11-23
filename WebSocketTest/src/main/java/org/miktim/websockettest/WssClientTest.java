@@ -7,7 +7,6 @@ package org.miktim.websockettest;
 
 import org.miktim.websocket.WebSocket;
 import org.miktim.websocket.WsConnection;
-import org.miktim.websocket.WsConnection.EventHandler;
 import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsStatus;
 
@@ -135,7 +134,7 @@ public class WssClientTest {
         }
 
         public void onMessage(WsConnection con, byte[] b) {
-            ws_log("rcv: unexpected binary");
+            ws_log("rcv: unexpected binary. Ignored.");
         }
     };
 

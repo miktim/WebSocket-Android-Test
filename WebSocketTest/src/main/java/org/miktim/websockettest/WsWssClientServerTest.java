@@ -69,7 +69,6 @@ public class WsWssClientServerTest {
 
         @Override
         public void onOpen(WsConnection conn, String subProtocol) {
-            WsConnection[] conns = conn.listConnections(); //
             try {
                 conn.send("connected,");
                 ws_log("Server side opened.");
@@ -225,7 +224,7 @@ public class WsWssClientServerTest {
         }
 
         public void onMessage(WsConnection con, byte[] b) {
-            ws_log("rcv: unexpected binary");
+            ws_log("rcv: unexpected binary. Ignored.");
         }
     };
 

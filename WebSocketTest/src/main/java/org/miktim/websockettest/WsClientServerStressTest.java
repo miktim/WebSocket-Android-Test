@@ -58,7 +58,7 @@ public class WsClientServerStressTest {
                     } else if (subp.equals("3")) {
 // there is nothing to do, wait for a timeout
                     } else if (subp.equals("4")) {
-// Server interrupt
+// Server allowed connections
                         conn.send((conn.isClientSide()
                                 ? "Hello, Server!" : "Hello, client!"));
                     }
@@ -95,7 +95,7 @@ public class WsClientServerStressTest {
                             conn.send(is, isText);
                         }
                     } else if (subp.equals("4")) {
-// terminate server
+// check server allowed connections
                         if (conn.isOpen()) {
                             conn.send(is, isText);
                         }
@@ -186,22 +186,24 @@ public class WsClientServerStressTest {
             conn = webSocket.connect(ADDRESS, handler, wsp);
             conn.join();
 
-            ws_log("\r\n4. Trying to interrupt Server:");
+            ws_log("\r\n4. Check server allowed connections:");
             wsp.setSubProtocols(new String[]{"4"});
             for (int i = 0; i < MAX_CLIENT_CONNECTIONS + 2; i++) {
                 webSocket.connect(ADDRESS, handler, wsp);
                 sleep(50); // without delay, local server does not have time to react
             }
+            sleep(50);
+            ws_log("\r\n5. Trying to interrupt Server:");
             wsServer.interrupt();
             sleep(50);
-            ws_log("\r\n5. Attempt to connect to interrupted server:");
+            ws_log("\r\n6. Attempt to connect to interrupted server:");
             try {
                 webSocket.connect(ADDRESS, handler, wsp);
             } catch (IOException e) {
-                ws_log("" + e);
+                ws_log("" + e + "\r\n");
             }
         } catch (Exception e) {
-            ws_log("Unexpected: " + e);
+            ws_log("Unexpected: " + e + "\r\n");
         }
     }
 }

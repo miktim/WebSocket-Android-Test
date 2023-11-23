@@ -25,7 +25,7 @@ import org.miktim.websocket.WebSocket;
 public class MainActivity extends AppCompatActivity {
 // keyFileName;password
     static String KEY_FILE = "localhost.bks;qwerty"; // BKS type
-//    static String KEY_FILE = "localhost.jks;qwerty"; // PKCS #12
+//    static String KEY_FILE = "localhost.pkcs;qwerty"; // PKCS #12
 
     WsConsole console;
 
