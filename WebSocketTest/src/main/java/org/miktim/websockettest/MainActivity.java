@@ -24,9 +24,8 @@ import org.miktim.websocket.WebSocket;
 
 public class MainActivity extends AppCompatActivity {
 // keyFileName;password
-    static String KEY_FILE = "localhost.bks;qwerty"; // BKS type
-//    static String KEY_FILE = "localhost.pkcs;qwerty"; // PKCS #12
-
+//    static String KEY_FILE = "localhost.bks;qwerty"; //
+    static String KEY_FILE = "localhost.bks1;qwerty"; // BKS-V1
     WsConsole console;
 
     @Override
@@ -69,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.WSSClientTest) {
             (new WssClientTest(this)).start();
             return true;
-//        } else if (itemId == R.id.WSServerTest) {
-//            (new WsServerTest(this)).start();
-//            return true;
+        } else if (itemId == R.id.WSServerTest) {
+            (new WsServerTest(this)).start();
+            return true;
         } else if (itemId == R.id.ClientServerStressTest){
             (new WsClientServerStressTest(this)).start();
             return true;

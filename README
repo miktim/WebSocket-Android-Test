@@ -1,11 +1,10 @@
-# miktim's WebSocket package test app, MIT (c) 2023 miktim@mail.ru
+# miktim's WebSocket package test app, MIT (c) 2023-2024 miktim@mail.ru
 
 WebSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
 The websocket jar file was built using JDK 1.8.0 with the target JDK 6
-See https://source.android.com/docs/setup/start/older-versions#jdk 
 
 The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 4
-Gradle: compileSdk 33; minSdk 16; targetSdk 33
+Gradle: compileSdk 33; minSdk 14; targetSdk 33
 
 3.4.5 fixed bug: occasional problem with clear text connections to localhost:
   test hang after connection is established.
@@ -13,28 +12,36 @@ Gradle: compileSdk 33; minSdk 16; targetSdk 33
 4.0.1 API 22,23 fixed: java.lang.UnsupportedOperationException:
   at javax.net.ssl.SSLSocket.shutdownOutput
 
+* WARNING! WSS client test require API 25 and newer
+  (features of the updated remote server certificate).
+
+4.1.3 WSS client test updated, WS server test added
+** WARNING! The WS Server test does not work on emulators where
+   the built-in browser does not support WebSocket
+
 The test was passed on:
 
 Emulator Nexus S:
 Android 13 API 33 Ok
 Android 11 API 30 Ok
 Android 10 API 29 Ok
-Android 5  API 22 Ok
+Android 7.1.1 API 25 Ok
+Android 5  API 22* **
 
 Emulator Pixel 5:
-Android 5  API 21 Ok
-Android 4.1 API 16 WSS client-server test failed: java.io.IOException: Wrong version of key store.
+Android 5  API 21* **
+Android 4.1 API 16* **
+    WSS client-server test failed: java.io.IOException: Wrong version of key store.
     BKS-V1 type key file will solve this problem
 
 Real devices:
-Android 7  API 24 Ok
-Android 6  API 23 Ok
+Android 7  API 24*
+Android 6  API 23*
+Android 4.0.3 API 15
 Harmony OS 3.0 Ok
 
 Helpful links:
 
 https://developer.android.com/privacy-and-security/security-config
-https://stackoverflow.com/questions/51902629/how-to-allow-all-network-connection-types-http-and-https-in-android-9-pie
-https://stackoverflow.com/questions/43387692/ssl-java-security-nosuchalgorithmexception
-https://stackoverflow.com/questions/65059714/sslserversocket-android-step-by-step
+https://gist.github.com/cecilemuller/9492b848eb8fe46d462abeb26656c4f8
 https://keystore-explorer.org/

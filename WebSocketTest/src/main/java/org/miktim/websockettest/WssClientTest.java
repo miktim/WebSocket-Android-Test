@@ -22,9 +22,9 @@ public class WssClientTest {
     final int MAX_MESSAGE_LENGTH = 10000; // bytes
     final int TEST_SHUTDOWN_TIMEOUT = 10000; // millis
     final String REMOTE_CONNECTION = "wss://websocketstest.com/service";//
-
     String fragmentTest = randomString(512);
     int counter = 0;
+    WsConnection wsConnection;
 
     WssClientTest(MainActivity activity) {
         context = activity;
@@ -53,7 +53,8 @@ public class WssClientTest {
     WsConnection.EventHandler clientHandler = new WsConnection.EventHandler() {
         @Override
         public void onOpen(WsConnection con, String subp) {
-            ws_log("Connected. " + con.getSSLSessionProtocol());
+            ws_log("Connected. " + (  con.getSSLSessionProtocol() == null ?
+                    "cleartext" : con.getSSLSessionProtocol()));
             WsParameters wsp = con.getParameters(); // debug
         }
 
@@ -65,7 +66,7 @@ public class WssClientTest {
         @Override
         public void onError(WsConnection con, Throwable e) {
             ws_log("Error: " + e.toString() + " " + con.getStatus());
-//                e.printStackTrace();
+                e.printStackTrace();
         }
 
         @Override
@@ -147,8 +148,17 @@ public class WssClientTest {
                     .setConnectionSoTimeout(10000, true);
 //            String sslProtocols = "TLSv1.2";//TLSv1.2 TLSv1.1 TLSv1 TLSv1.3"; //
 //            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
+//            wsp.getSSLParameters().setCipherSuites(
+//                    new String[]{"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"});
+
             wsp.setSSLParameters(null);
-//            wsp.setPayloadLength(fragmentTest.length()/2); // not work!
+
+            if (android.os.Build.VERSION.SDK_INT < 25) {
+                ws_log("WARNING! API version 25 and newer is required. Current API is "
+                + android.os.Build.VERSION.SDK_INT);
+            }
+
+//          wsp.setPayloadLength(fragmentTest.length()/2); // not work!
 
             ws_log("\r\nWss client test"
                     + "\r\nTrying to connect to " + REMOTE_CONNECTION
@@ -156,7 +166,7 @@ public class WssClientTest {
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                     + "\r\n");
 
-            final WsConnection wsConnection
+            wsConnection
                     = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);
             final Timer timer = new Timer();
             timer.schedule(new TimerTask() {
@@ -164,9 +174,16 @@ public class WssClientTest {
                 public void run() {
                     wsConnection.close(WsStatus.GOING_AWAY, "Time is over!");
                     timer.cancel();
-                    ws_log("\r\nCompleted.");
+                    ws_log("\r\nTest completed.");
                 }
-            },100000);// TEST_SHUTDOWN_TIMEOUT);
+            },TEST_SHUTDOWN_TIMEOUT);
+
+            wsConnection.join(500);
+            if (wsConnection.getStatus().error != null) {
+                ws_log("\r\nTrying an unsecured connection...");
+                wsConnection
+                        = webSocket.connect(REMOTE_CONNECTION.replace("wss:","ws:"), clientHandler, wsp);
+            }
         } catch (Throwable e) {
             ws_log("Unexpected: " + e);
             e.printStackTrace();

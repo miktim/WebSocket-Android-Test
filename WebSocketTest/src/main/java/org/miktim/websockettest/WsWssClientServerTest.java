@@ -104,7 +104,7 @@ public class WsWssClientServerTest {
                         conn.send(cmd);
                         break;
                     case ("ping"):
-                        sleep(1000);
+                        sleep(2000);
                         if(conn.isOpen()) conn.send("ping,success");
                         break;
                     case ("fragments"):
@@ -134,7 +134,8 @@ public class WsWssClientServerTest {
 
         @Override
         public void onClose(WsConnection conn, WsStatus closeStatus) {
-            ws_log("Server side closed. "+ closeStatus);
+            ws_log("Server side closed. "+ closeStatus
+                + "\r\n\nTest completed.");
         }
     };
 
@@ -237,7 +238,7 @@ public class WsWssClientServerTest {
             if(scheme.equals("wss"))
                 webSocket.setKeyFile(util.keyFile(keyInfo[0]), keyInfo[1]);
             WsParameters wsp = new WsParameters() //
-                    .setConnectionSoTimeout(200, true)
+                    .setConnectionSoTimeout(1000, true)
                     .setPayloadBufferLength(0); // min buffer
 //            String sslProtocols = "TLSv1.2"; //"TLSv1.3 TLSv1.2 TLSv1.1 TLSv1"
 //            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));

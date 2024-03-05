@@ -6,8 +6,8 @@
         android:title="WSS client-server test"  />
     <item android:id="@+id/WSSClientTest"
         android:title="WSS client test"  />
-    <!--item android:id="@+id/WSServerTest"
-        android:title="WS server test"  /-->
+    <item android:id="@+id/WSServerTest"
+        android:title="WS server test"/>
     <item android:id="@+id/ClientServerStressTest"
         android:title="WS client-server stress test"  />
     <item android:id="@+id/Exit"

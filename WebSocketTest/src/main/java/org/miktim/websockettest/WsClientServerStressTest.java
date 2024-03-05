@@ -44,6 +44,10 @@ public class WsClientServerStressTest extends Thread {
 
             @Override
             public void onOpen(WsConnection conn, String subp) {
+                if(subp == null) {
+                    conn.close(WsStatus.POLICY_VIOLATION,"Subprotocol required");
+                    return;
+                }
                 try {
                     if (subp.equals("1") && conn.isClientSide()) {
 // message too big

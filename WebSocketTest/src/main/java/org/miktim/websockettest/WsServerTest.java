@@ -65,23 +65,21 @@ public class WsServerTest extends Thread {
                 public void run() {
                     server.close("Time is over!");
                     timer.cancel();
+                    ws_log("Time is over!");
                 }
             }, TEST_SHUTDOWN_TIMEOUT);
 
-            ws_log("\r\nWsServerTest "
-                    + WebSocket.VERSION
+            ws_log("\r\nWS server test "
                     + "\r\nIncoming maxMessageLength: " + MAX_MESSAGE_LENGTH
                     + "\r\nWebSocket subProtocols: " + WEBSOCKET_SUBPROTOCOLS
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
+                    + "\r\nView WsServerTest.html in default browser"
                     + "\r\n");
 // call the default browser
-            String fileName = "WsServerTest.html";
-            util.saveAssetAsFile(fileName);
-            File file = new File(context.getFilesDir(), fileName);
-            Intent intent = new Intent(ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), "text/html");
-            context.startActivity(intent);
+            String testUrl = "http://miktim.github.io/websockettest/WsServerTest.html";
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(testUrl));
+            context.startActivity(browserIntent);
 
         } catch (Exception e) {
             ws_log("Unexpected: " + e);
@@ -99,7 +97,7 @@ public class WsServerTest extends Thread {
                     con.getPath(),
                     (con.getQuery() == null ? "" : "?" + con.getQuery()) //                + " Peer: " + con.getPeerHost()
                     ,
-                    " Subprotocol:" + subp));
+                    " Subprotocol: " + subp));
             try {
                 con.send(hello);
             } catch (IOException e) {
@@ -167,6 +165,9 @@ public class WsServerTest extends Thread {
                 }
             } catch (IOException e) {
                 ws_log(String.format("[%s] server side onMessage send error: %s",
+                        testId, e));
+            } catch (Error e) {
+                ws_log(String.format("[%s] Fatal error: %s",
                         testId, e));
             }
         }

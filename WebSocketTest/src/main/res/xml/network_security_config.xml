@@ -6,7 +6,7 @@
             <certificates src="user" />
         </trust-anchors>
     </base-config>
-    <!-- domain-config cleartextTrafficPermitted="true">
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">localhost</domain>
-    </domain-config -->
+    </domain-config>
 </network-security-config>
