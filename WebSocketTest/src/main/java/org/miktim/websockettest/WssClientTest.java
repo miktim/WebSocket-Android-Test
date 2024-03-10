@@ -154,7 +154,7 @@ public class WssClientTest {
             wsp.setSSLParameters(null);
 
             if (android.os.Build.VERSION.SDK_INT < 25) {
-                ws_log("WARNING! API version 25 and newer is required. Current API is "
+                ws_log("WARNING! TLS connection requires API version 25 and later. Current API is "
                 + android.os.Build.VERSION.SDK_INT);
             }
 
@@ -180,7 +180,7 @@ public class WssClientTest {
 
             wsConnection.join(500);
             if (wsConnection.getStatus().error != null) {
-                ws_log("\r\nTrying an unsecured connection...");
+                ws_log("\r\nTrying an unsecured connection...\r\n");
                 wsConnection
                         = webSocket.connect(REMOTE_CONNECTION.replace("wss:","ws:"), clientHandler, wsp);
             }

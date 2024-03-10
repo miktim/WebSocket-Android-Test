@@ -14,10 +14,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.miktim.websocket.WebSocket;
@@ -96,13 +99,17 @@ public class MainActivity extends AppCompatActivity {
         TextView consoleTextView = findViewById(R.id.ConsoleTextView);
 
         public WsConsole() {
+            consoleTextView.setFocusable(true);
+//            consoleTextView.setMovementMethod(new ScrollingMovementMethod());
             erase();
         }
 
         public void println(String msg) {
             Log.d("", msg);
             consoleTextView.append(msg + "\n\r");
-         }
+//            int scroll_amount = consoleTextView.getBottom();
+//            consoleTextView.scrollTo(0, scroll_amount);
+        }
         public void erase() {
             consoleTextView.setText("");
         }

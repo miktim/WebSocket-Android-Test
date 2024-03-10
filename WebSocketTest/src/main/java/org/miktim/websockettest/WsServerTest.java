@@ -74,7 +74,7 @@ public class WsServerTest extends Thread {
                     + "\r\nWebSocket subProtocols: " + WEBSOCKET_SUBPROTOCOLS
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
-                    + "\r\nView WsServerTest.html in default browser"
+                    + "\r\nView WsServerTest.html in the default browser"
                     + "\r\n");
 // call the default browser
             String testUrl = "http://miktim.github.io/websockettest/WsServerTest.html";
