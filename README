@@ -3,7 +3,8 @@
 WebSocket package see in WebSocket repo: https://github.com/miktim/WebSocket
 The websocket jar file was built using JDK 1.8.0 with the target JDK 6
 
-The application was created and tested in Android Studio Arctic Fox | 2020.3.1 patch 4
+The application (./WebSocketTest/release/) was created and tested
+in Android Studio Arctic Fox | 2020.3.1 patch 4
 Gradle: compileSdk 33; minSdk 14; targetSdk 33
 
 3.4.5 fixed bug: occasional problem with clear text connections to localhost:
@@ -12,12 +13,17 @@ Gradle: compileSdk 33; minSdk 14; targetSdk 33
 4.0.1 API 22,23 fixed: java.lang.UnsupportedOperationException:
   at javax.net.ssl.SSLSocket.shutdownOutput
 
-* WARNING! WSS client test require API 25 and newer
-  (features of the updated remote server certificate).
+* WARNING! WSS client test:
+   - TLS connection require API 25 and newer
+     (features of the updated remote server certificate).
 
 4.1.3 WSS client test updated, WS server test added
-** WARNING! The WS Server test does not work on emulators where
-   the built-in browser does not support WebSocket
+** WARNING! WS Server test:
+   - does not work on emulators/devices where the browser
+     does not support WebSocket;
+   - step 3 may throw an OutOfMemoryError;
+   - browser may hang on step 4 ping (app in wait state).
+     TODO: replace Thread with Service
 
 The test was passed on:
 
@@ -32,13 +38,13 @@ Emulator Pixel 5:
 Android 5  API 21* **
 Android 4.1 API 16* **
     WSS client-server test failed: java.io.IOException: Wrong version of key store.
-    BKS-V1 type key file will solve this problem
+    BKS-V1 type key file will solve this problem (KeyStore Explorer 5.4.x)
 
 Real devices:
 Android 7  API 24*
 Android 6  API 23*
 Android 4.0.3 API 15*
-Harmony OS 3.0 Ok
+Harmony OS 3.0 **
 
 Helpful links:
 

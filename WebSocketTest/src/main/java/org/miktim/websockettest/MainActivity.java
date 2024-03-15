@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -97,18 +98,31 @@ public class MainActivity extends AppCompatActivity {
 
     public class WsConsole {
         TextView consoleTextView = findViewById(R.id.ConsoleTextView);
-
+        ScrollView consoleScrollView = findViewById(R.id.ConsoleScrollView);
+// https://stackoverflow.com/questions/3307267/how-to-scroll-to-bottom-in-a-scrollview-on-activity-startup
         public WsConsole() {
             consoleTextView.setFocusable(true);
+            consoleScrollView.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    consoleScrollView.post(new Runnable() {
+                        public void run() {
+                            consoleScrollView.fullScroll(View.FOCUS_DOWN);
+                        }
+                    });
+                }
+            });
 //            consoleTextView.setMovementMethod(new ScrollingMovementMethod());
             erase();
         }
 
         public void println(String msg) {
-            Log.d("", msg);
             consoleTextView.append(msg + "\n\r");
+            Log.d("", msg);
+//            consoleScrollView.fullScroll(View.FOCUS_DOWN);
 //            int scroll_amount = consoleTextView.getBottom();
-//            consoleTextView.scrollTo(0, scroll_amount);
+//            consoleScrollView.scrollTo(0, scroll_amount);
         }
         public void erase() {
             consoleTextView.setText("");

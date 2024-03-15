@@ -1,17 +1,16 @@
-openssl
+openssl:
 Key pair generation see:
 https://gist.github.com/cecilemuller/9492b848eb8fe46d462abeb26656c4f8
+and scripts here
 
 About version 1 certificates see:
 https://stackoverflow.com/questions/26788244/how-to-create-a-legacy-v1-or-v2-x-509-cert-for-testing
 
-Default Android KeyStore type is "BKS".
-
+KeyStore Explorer:
+Explorer also converts Java keystore (jks) to Android keystore (bks) and vice versa.
 See: https://keystore-explorer.org/
+Ver 5.4.x supports BKS-V1 keystore type.
 
-Java keytool see:
+Java keytool:
 https://docs.oracle.com/javase/8/docs/technotes/tools/unix/keytool.html
 https://www.sslshopper.com/article-most-common-java-keytool-keystore-commands.html
-
-Key pair generation example:
-keytool -genkey -alias mydomain -keypass mypassword -keystore keystore.jks -storepass mypassword

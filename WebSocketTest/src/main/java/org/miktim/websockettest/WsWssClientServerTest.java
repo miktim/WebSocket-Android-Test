@@ -134,8 +134,8 @@ public class WsWssClientServerTest {
 
         @Override
         public void onClose(WsConnection conn, WsStatus closeStatus) {
-            ws_log("Server side closed. "+ closeStatus
-                + "\r\n\nTest completed.");
+            ws_log("Server side closed. "+ closeStatus);
+            ws_log("\r\nTest completed.");
         }
     };
 

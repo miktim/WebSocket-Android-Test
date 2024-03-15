@@ -1,6 +1,5 @@
 package org.miktim.websockettest;
 
-import static android.content.Intent.ACTION_VIEW;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,12 +10,9 @@ import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsServer;
 import org.miktim.websocket.WsStatus;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,11 +67,11 @@ public class WsServerTest extends Thread {
 
             ws_log("\r\nWS server test "
                     + "\r\nIncoming maxMessageLength: " + MAX_MESSAGE_LENGTH
-                    + "\r\nWebSocket subProtocols: " + WEBSOCKET_SUBPROTOCOLS
+                    + " bytes\r\nWebSocket subProtocols: " + WEBSOCKET_SUBPROTOCOLS
                     + "\r\nTest will be terminated after "
                     + (TEST_SHUTDOWN_TIMEOUT / 1000) + " seconds"
                     + "\r\nView WsServerTest.html in the default browser"
-                    + "\r\n");
+                    + "\r\n\ns. wrong GET http request (1002 expected)");
 // call the default browser
             String testUrl = "http://miktim.github.io/websockettest/WsServerTest.html";
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(testUrl));
@@ -108,13 +104,26 @@ public class WsServerTest extends Thread {
             }
         }
 
+        boolean checkStatus(int expected, WsStatus status) {
+            return expected == status.code;
+        }
+
         @Override
         public void onClose(WsConnection con, WsStatus status) {
             String testId = getTestId(con);
-            ws_log(String.format("[%s] server side onCLOSE: %s %s\r\n",
+            boolean isOk = false;
+            if (testId.equals("s")) isOk = checkStatus(1002,status);
+            else if (testId.equals("0")) isOk = checkStatus(1006,status);
+            else if (testId.equals("1")) isOk = checkStatus(1000,status);
+            else if (testId.equals("2")) isOk = checkStatus(1000,status);
+            else if (testId.equals("3")) isOk = checkStatus(1009,status);
+            else if (testId.equals("4")) isOk = checkStatus(1001,status);
+            ws_log(String.format("[%s] server side onCLOSE: %s %s\r\n%s\r\n%s",
                     testId,
                     con.getPath(),
-                    status));
+                    status,
+                    isOk ? "OK" : "Failed!",
+                    testId.equals("4") ? "\r\nTest completed" : ""));
         }
 
         @Override
@@ -154,7 +163,11 @@ public class WsServerTest extends Thread {
                         }
                     } else if (testId.equals("3")) { // message too big
                         if (con.isOpen()) {
-                            con.send(message + message); // can throw java.lang.OutOfMemoryError
+                            try {
+                                con.send(message + message); // can throw java.lang.OutOfMemoryError
+                            } catch (java.lang.OutOfMemoryError e) {
+                                con.close(WsStatus.INTERNAL_ERROR, "Out of memory");
+                            }
                         }
                     } else if (testId.equals("4")) { // ping, wait server shutdown
                     } else {
