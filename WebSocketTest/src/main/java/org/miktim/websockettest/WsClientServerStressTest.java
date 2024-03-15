@@ -144,9 +144,9 @@ public class WsClientServerStressTest extends Thread {
         try {
             final WebSocket webSocket = new WebSocket();
             final WsParameters wsp = new WsParameters() // client/server parameters
-                    .setSubProtocols("0,1,2,3,4,5,6,7,8,9".split(","))
+                    .setSubProtocols("0,1,2,3,4,5,6,7,8,9".split(","));
                     //               .setMaxMessageLength(2000)
-                    .setPayloadBufferLength(0);// min payload length
+//                    .setPayloadBufferLength(0);// min payload length
 
             final Timer timer = new Timer(true);
             timer.schedule(new TimerTask() {
