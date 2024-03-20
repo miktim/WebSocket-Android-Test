@@ -32,13 +32,13 @@ Android 13 API 33 Ok
 Android 11 API 30 Ok
 Android 10 API 29 Ok
 Android 7.1.1 API 25 Ok
-Android 5  API 22* **
+Android 5.1 API 22* **
 
 Emulator Pixel 5:
 Android 5  API 21* **
 Android 4.1 API 16* **
     WSS client-server test failed: java.io.IOException: Wrong version of key store.
-    BKS-V1 type key file will solve this problem (KeyStore Explorer 5.4.x)
+    BKS-V1 type key file solved this problem (KeyStore Explorer 5.4.x)
 
 Real devices:
 Android 7  API 24*

@@ -158,6 +158,7 @@ public class WssClientTest {
                 + android.os.Build.VERSION.SDK_INT);
             }
 
+// the site does not accept fragmented messages
 //          wsp.setPayloadLength(fragmentTest.length()/2); // not work!
 
             ws_log("\r\nWss client test"

@@ -239,7 +239,8 @@ public class WsWssClientServerTest {
                 webSocket.setKeyFile(util.keyFile(keyInfo[0]), keyInfo[1]);
             WsParameters wsp = new WsParameters() //
                     .setConnectionSoTimeout(1000, true)
-                    .setPayloadBufferLength(0); // min buffer
+                    .setPayloadBufferLength(fragmentTest.getBytes("UTF-8").length);
+//                    .setPayloadBufferLength(0); // min buffer
 //            String sslProtocols = "TLSv1.2"; //"TLSv1.3 TLSv1.2 TLSv1.1 TLSv1"
 //            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
 //            wsp.setSSLParameters(null);
@@ -261,7 +262,7 @@ public class WsWssClientServerTest {
             final WsConnection wsConnection
                         = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);
 
-
+            webSocket.resetKeyFile();
             final Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
