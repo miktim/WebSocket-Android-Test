@@ -7,6 +7,8 @@ package org.miktim.websockettest;
 
 import org.miktim.websocket.WebSocket;
 import org.miktim.websocket.WsConnection;
+import org.miktim.websocket.WsError;
+import org.miktim.websocket.WsMessage;
 import org.miktim.websocket.WsServer;
 import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsStatus;
@@ -64,7 +66,7 @@ public class WsWssClientServerTest {
         this.wait(millis);
     }
 
-    WsConnection.EventHandler serverSideHandler = new WsConnection.EventHandler(){
+    WsConnection.Handler serverSideHandler = new WsConnection.Handler(){
         String cmd = "";
 
         @Override
@@ -72,13 +74,17 @@ public class WsWssClientServerTest {
             try {
                 conn.send("connected,");
                 ws_log("Server side opened.");
-            } catch (IOException e) {
+            } catch (WsError e) {
                 ws_log("Server side onOpen send() error: " + e);
                 e.printStackTrace();
             }
         }
 
         @Override
+        public void onMessage(WsConnection conn, WsMessage msg) {
+           onMessage(conn, msg, msg.isText());
+        }
+//        @Override
         public void onMessage(WsConnection conn, InputStream is, boolean isUTF8Text) {
             byte[] messageBuffer = new byte[MAX_MESSAGE_LENGTH];
             int messageLen;
@@ -139,7 +145,7 @@ public class WsWssClientServerTest {
         }
     };
 
-    WsConnection.EventHandler clientHandler = new WsConnection.EventHandler() {
+    WsConnection.Handler clientHandler = new WsConnection.Handler() {
         @Override
         public void onOpen(WsConnection con, String subp) {
             String protocol = con.getSSLSessionProtocol();
@@ -158,8 +164,12 @@ public class WsWssClientServerTest {
             ws_log("Client onError: " + e.toString() + " " + con.getStatus());
 //                e.printStackTrace();
         }
-
         @Override
+        public void onMessage(WsConnection con, WsMessage msg) {
+            onMessage(con,msg,msg.isText());
+        }
+
+//        @Override
         public void onMessage(WsConnection con, InputStream is, boolean isText) {
             byte[] messageBuffer = new byte[MAX_MESSAGE_LENGTH];
             int messageLen = 0;
@@ -254,10 +264,10 @@ public class WsWssClientServerTest {
 
             if (scheme.equals("wss")) {
                 wsServer
-                        = webSocket.SecureServer(PORT, serverSideHandler, wsp).launch();
+                        = webSocket.startSecureServer(PORT, serverSideHandler, wsp);
             } else {
                 wsServer
-                        = webSocket.Server(PORT, serverSideHandler, wsp).launch();
+                        = webSocket.startServer(PORT, serverSideHandler, wsp);
             }
             final WsConnection wsConnection
                         = webSocket.connect(REMOTE_CONNECTION, clientHandler, wsp);

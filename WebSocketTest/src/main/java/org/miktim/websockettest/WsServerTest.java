@@ -6,6 +6,8 @@ import android.net.Uri;
 
 import org.miktim.websocket.WebSocket;
 import org.miktim.websocket.WsConnection;
+import org.miktim.websocket.WsError;
+import org.miktim.websocket.WsMessage;
 import org.miktim.websocket.WsParameters;
 import org.miktim.websocket.WsServer;
 import org.miktim.websocket.WsStatus;
@@ -50,16 +52,15 @@ public class WsServerTest extends Thread {
             webSocket = new WebSocket(InetAddress.getByName("localhost"));
             WsParameters wsp = (new WsParameters())
                     .setMaxMessageLength(MAX_MESSAGE_LENGTH)
-                    .setConnectionSoTimeout(1000, true) // ping on 1 second timeout
+                    .setConnectionSoTimeout(500, true) // ping on 1 second timeout
                     .setSubProtocols(WEBSOCKET_SUBPROTOCOLS.split(","));
-            final WsServer server = webSocket.Server(8080, handler, wsp);
-            server.start();
+            final WsServer server = webSocket.startServer(8080, handler, wsp);
 // init shutdown timer
             final Timer timer = new Timer(true); // is daemon
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    server.close("Time is over!");
+                    server.stopServer("Time is over!");
                     timer.cancel();
                     ws_log("Time is over!");
                 }
@@ -82,7 +83,7 @@ public class WsServerTest extends Thread {
         }
     }
 
-    WsConnection.EventHandler handler = new WsConnection.EventHandler() {
+    WsConnection.Handler handler = new WsConnection.Handler() {
         @Override
         public void onOpen(WsConnection con, String subp) {
             String testId = getTestId(con);
@@ -96,12 +97,13 @@ public class WsServerTest extends Thread {
                     " Subprotocol: " + subp));
             try {
                 con.send(hello);
-            } catch (IOException e) {
+            } catch (WsError e) {
                 ws_log(String.format("[%s] server side onOPEN send error: %s",
                         testId,
                         e));
 //            e.printStackTrace();
             }
+            if(testId.equals("0")) con.close("Suddenly... null subProtocol accepted");
         }
 
         boolean checkStatus(int expected, WsStatus status) {
@@ -136,6 +138,10 @@ public class WsServerTest extends Thread {
         }
 
         @Override
+        public void onMessage(WsConnection con, WsMessage msg) {
+            onMessage(con, msg, msg.isText());
+        }
+//        @Override
         public void onMessage(WsConnection con, InputStream is, boolean isText) {
             String testId = getTestId(con);
             int messageLen;

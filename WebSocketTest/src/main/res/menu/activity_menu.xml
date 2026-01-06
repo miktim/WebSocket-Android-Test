@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/WSEnvironment"
+        android:title="Environment"  />
     <item android:id="@+id/WSClientServerTest"
         android:title="WS client-server test"  />
     <item android:id="@+id/WSSClientServerTest"

@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -63,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         console.erase();
         int itemId = item.getItemId();
-        if (itemId == R.id.WSClientServerTest) {
+        if (itemId == R.id.WSEnvironment) {
+            (new WsEnvironment(this)).start();
+            return true;
+        } else  if (itemId == R.id.WSClientServerTest) {
             (new WsWssClientServerTest(this, "ws")).start();
             return true;
         } else if (itemId == R.id.WSSClientServerTest) {
