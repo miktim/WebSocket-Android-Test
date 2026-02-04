@@ -178,12 +178,12 @@ public class WsClientServerStressTest extends Thread {
             joinAll(webSocket);
             testResult(conn, 1008);
 
-            ws_log("\r\n3. Trying connection timeout (1001):");
+            ws_log("\r\n3. Trying connection timeout (1008):");
             wsp.setSubProtocols(new String[]{"3"})
                     .setConnectionSoTimeout(400, false);
             conn = webSocket.connect(ADDRESS, handler, wsp);
             joinAll(webSocket);
-            testResult(conn, 1001);
+            testResult(conn, 1008);
 
             ws_log("\r\n4. Check server allowed connections ("
             + MAX_CLIENT_CONNECTIONS + "):");

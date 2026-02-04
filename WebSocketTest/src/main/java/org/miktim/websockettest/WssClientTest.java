@@ -15,7 +15,7 @@ import org.miktim.websocket.WsStatus;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class WssClientTest {
+public class WssClientTest extends Thread{
     final MainActivity context;
     final ContextUtil util;
     final int MAX_MESSAGE_LENGTH = 10000; // bytes
@@ -119,13 +119,13 @@ public class WssClientTest {
         }
     };
 
-    void start() {
+    public void run() {
         ws_log(null); // clear console
         try {
             final WebSocket webSocket = new WebSocket();
             WsParameters wsp = new WsParameters()
                     .setMaxMessageLength(MAX_MESSAGE_LENGTH); //
-//            wsp.setConnectionSoTimeout(2000, true);
+            wsp.setConnectionSoTimeout(TEST_SHUTDOWN_TIMEOUT, true);
 //            String sslProtocols = "TLSv1.2";//TLSv1.2 TLSv1.1 TLSv1 TLSv1.3"; //
 //            wsp.getSSLParameters().setProtocols(sslProtocols.split(" "));
 //            wsp.getSSLParameters().setCipherSuites(
