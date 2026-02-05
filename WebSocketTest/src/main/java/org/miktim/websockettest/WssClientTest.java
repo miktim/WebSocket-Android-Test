@@ -73,7 +73,7 @@ public class WssClientTest extends Thread{
         public void onMessage(WsConnection con, WsMessage msg) {
             if (!msg.isText()) {
                 ws_log("rcv: unexpected binary");
-                con.close(WsStatus.INVALID_DATA, "Unexpected binary");
+                con.close(WsStatus.UNSUPPORTED_DATA, "Unexpected binary");
                 return;
             }
 

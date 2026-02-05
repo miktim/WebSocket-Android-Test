@@ -7,6 +7,9 @@ The application (./WebSocketTest/release/) was created and tested
 in Android Studio Dolphin | 2021.3.1 patch 1
 Gradle: compileSdk 33; minSdk 14; targetSdk 33
 
+5.0.5
+   - websocket-5.0.5.jar used;
+   - fixed WssClientTest.
 5.0.3
    - Environment test added;
    - Ws client-server stress test fixed;
